@@ -29,7 +29,7 @@ class AdminController extends Controller
         ));
     }
 
-    // 🔥 HALAMAN LIST PEMBAYARAN PENDING
+    //  HALAMAN LIST PEMBAYARAN PENDING
     public function konfirmasiIndex()
     {
         $pembayaran = Pembayaran::with('pemesanan.user', 'pemesanan.jadwal.lapangan')
