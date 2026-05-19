@@ -22,7 +22,7 @@
     {{-- NAVBAR --}}
     <nav class="gradient-nav text-white px-6 py-4 flex items-center justify-between shadow-lg">
         <a href="/" class="text-xl font-bold tracking-wide flex items-center gap-2">
-            🏟️ <span>Sports Field Booking System</span>
+            <span>Sports Field Booking System</span>
         </a>
 
         <div class="flex gap-6 text-sm font-medium items-center">
@@ -31,19 +31,19 @@
                 {{-- Home --}}
                 <a href="{{ Auth::user()->isAdmin() ? '/admin/dashboard' : '/' }}"
                     class="hover:text-blue-200 transition flex items-center gap-1">
-                    🏠 <span>Beranda</span>
+                    <span>Beranda</span>
                 </a>
 
                 {{-- Menu berdasarkan role --}}
                 @if(Auth::user()->isAdmin())
                     <a href="/lapangan" class="hover:text-blue-200 transition">Lapangan</a>
-                    <a href="/admin/dashboard" class="hover:text-blue-200 transition">👑 Dashboard</a>
+                    <a href="/admin/dashboard" class="hover:text-blue-200 transition">Dashboard</a>
                 @else
                     <a href="/lapangan" class="hover:text-blue-200 transition">Lapangan</a>
                     <a href="/pemesanan" class="hover:text-blue-200 transition">Pemesanan</a>
-                    <a href="/review" class="hover:text-blue-200 transition">⭐ Review</a>
-                    <a href="/notifikasi" class="hover:text-blue-200 transition">🔔 Notifikasi</a>
-                    <a href="/profile" class="hover:text-blue-200 transition">👤 Profil</a>
+                    <a href="/review" class="hover:text-blue-200 transition">Review</a>
+                    <a href="/notifikasi" class="hover:text-blue-200 transition">Notifikasi</a>
+                    <a href="/profile" class="hover:text-blue-200 transition">Profil</a>
                 @endif
 
                 {{-- Logout --}}
