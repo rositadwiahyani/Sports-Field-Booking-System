@@ -8,10 +8,20 @@ use App\Models\Lapangan;
 
 class JadwalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jadwal = Jadwal::with('lapangan')->get();
-        return view('jadwal.index', compact('jadwal'));
+        $lapanganList = Lapangan::withCount('jadwal')->get();
+        $selectedLapangan = $request->input('lapangan_id');
+
+        $query = Jadwal::with('lapangan');
+
+        if ($selectedLapangan) {
+            $query->where('lapangan_id', $selectedLapangan);
+        }
+
+        $jadwal = $query->orderBy('tanggal', 'desc')->orderBy('jam_mulai')->get();
+
+        return view('jadwal.index', compact('jadwal', 'lapanganList', 'selectedLapangan'));
     }
 
     public function create()
