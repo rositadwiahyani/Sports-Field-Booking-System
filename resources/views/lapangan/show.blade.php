@@ -12,7 +12,7 @@
             class="w-full h-72 object-cover rounded-2xl mb-6 shadow">
     @endif
 
-    <div class="grid grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         {{-- Info Utama --}}
         <div class="col-span-2">
@@ -37,12 +37,12 @@
                 <span class="text-base font-normal text-gray-400">/ jam</span>
             </p>
 
-            <div class="flex gap-4 mb-6">
-                <div class="bg-gray-50 rounded-xl px-4 py-3 text-center">
+            <div class="flex flex-wrap gap-4 mb-6">
+                <div class="bg-gray-50 rounded-xl px-4 py-3 text-center flex-1 min-w-[120px]">
                     <p class="text-xs text-gray-400 mb-1">Kapasitas</p>
                     <p class="font-bold text-gray-800">👥 {{ $lapangan->kapasitas }} orang</p>
                 </div>
-                <div class="bg-gray-50 rounded-xl px-4 py-3 text-center">
+                <div class="bg-gray-50 rounded-xl px-4 py-3 text-center flex-1 min-w-[120px]">
                     <p class="text-xs text-gray-400 mb-1">Nomor</p>
                     <p class="font-bold text-gray-800">{{ $lapangan->nomor_lapangan }}</p>
                 </div>
@@ -99,3 +99,4 @@
 </div>
 
 @endsection
+

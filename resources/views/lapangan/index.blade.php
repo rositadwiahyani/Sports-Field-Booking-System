@@ -18,7 +18,7 @@
 
 {{-- SEARCH & FILTER --}}
 <form method="GET" action="/lapangan" class="bg-white rounded-xl shadow p-4 mb-6">
-    <div class="flex gap-3">
+    <div class="flex flex-col md:flex-row gap-3">
         <div class="flex-1">
             <input type="text" name="search" value="{{ request('search') }}"
                 placeholder="Cari nama lapangan atau tipe..."
@@ -149,5 +149,6 @@
 </div>
 
 @endsection
+
 
 
