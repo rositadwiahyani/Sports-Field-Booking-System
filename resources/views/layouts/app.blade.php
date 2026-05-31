@@ -20,21 +20,22 @@
 <body class="bg-gray-50 min-h-screen">
 
     {{-- NAVBAR --}}
-    <nav class="gradient-nav text-white px-6 py-4 flex items-center justify-between shadow-lg">
-        <a href="/" class="text-xl font-bold tracking-wide flex items-center gap-2">
+    <nav class="gradient-nav text-white px-6 py-4 flex items-center justify-between shadow-lg relative z-50">
+        <a href="/" class="text-xl md:text-xl font-bold tracking-wide flex items-center gap-2">
             <span>Sports Field Booking System</span>
         </a>
 
-        <div class="flex gap-6 text-sm font-medium items-center">
+        {{-- Hamburger Menu Button (Mobile) --}}
+        <button id="mobile-menu-btn" class="md:hidden block text-white focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+
+        {{-- Desktop Navigation --}}
+        <div class="hidden md:flex gap-6 text-sm font-medium items-center">
             @auth
-
-                {{-- Home --}}
-                <a href="{{ Auth::user()->isAdmin() ? '/admin/dashboard' : '/' }}"
-                    class="hover:text-blue-200 transition flex items-center gap-1">
-                    <span>Beranda</span>
-                </a>
-
-                {{-- Menu berdasarkan role --}}
+                <a href="{{ Auth::user()->isAdmin() ? '/admin/dashboard' : '/' }}" class="hover:text-blue-200 transition">Beranda</a>
                 @if(Auth::user()->isAdmin())
                     <a href="/lapangan" class="hover:text-blue-200 transition">Lapangan</a>
                     <a href="/admin/dashboard" class="hover:text-blue-200 transition">Dashboard</a>
@@ -45,22 +46,37 @@
                     <a href="/notifikasi" class="hover:text-blue-200 transition">Notifikasi</a>
                     <a href="/profile" class="hover:text-blue-200 transition">Profil</a>
                 @endif
-
-                {{-- Logout --}}
                 <form action="/logout" method="POST" style="display:inline;">
                     @csrf
-                    <button type="submit"
-                        class="bg-white text-blue-700 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-blue-50 transition">
-                        Logout
-                    </button>
+                    <button type="submit" class="bg-white text-blue-700 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-blue-50 transition">Logout</button>
                 </form>
-
             @else
                 <a href="/login" class="hover:text-blue-200 transition">Login</a>
-                <a href="/register"
-                    class="bg-white text-blue-700 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-blue-50 transition">
-                    Daftar
-                </a>
+                <a href="/register" class="bg-white text-blue-700 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-blue-50 transition">Daftar</a>
+            @endauth
+        </div>
+
+        {{-- Mobile Dropdown Menu --}}
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-blue-800 shadow-md md:hidden flex flex-col items-center py-4 gap-4">
+            @auth
+                <a href="{{ Auth::user()->isAdmin() ? '/admin/dashboard' : '/' }}" class="hover:text-blue-200 transition">Beranda</a>
+                @if(Auth::user()->isAdmin())
+                    <a href="/lapangan" class="hover:text-blue-200 transition">Lapangan</a>
+                    <a href="/admin/dashboard" class="hover:text-blue-200 transition">Dashboard</a>
+                @else
+                    <a href="/lapangan" class="hover:text-blue-200 transition">Lapangan</a>
+                    <a href="/pemesanan" class="hover:text-blue-200 transition">Pemesanan</a>
+                    <a href="/review" class="hover:text-blue-200 transition">Review</a>
+                    <a href="/notifikasi" class="hover:text-blue-200 transition">Notifikasi</a>
+                    <a href="/profile" class="hover:text-blue-200 transition">Profil</a>
+                @endif
+                <form action="/logout" method="POST" class="mt-2">
+                    @csrf
+                    <button type="submit" class="bg-white text-blue-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-50 transition">Logout</button>
+                </form>
+            @else
+                <a href="/login" class="hover:text-blue-200 transition">Login</a>
+                <a href="/register" class="bg-white text-blue-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-50 transition">Daftar</a>
             @endauth
         </div>
     </nav>
@@ -89,6 +105,17 @@
         © 2026 <span class="text-blue-600 font-semibold">Sports Field Booking System</span> — Sistem Booking Lapangan Olahraga
     </footer>
 
+    <script>
+        // Toggle Mobile Menu
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
 </body>
 </html>
 
