@@ -53,12 +53,14 @@ class PembayaranController extends Controller
         $pemesanan->save();
 
         // 🔔 Notifikasi ke user
+        $lapanganNames = $pemesanan->jadwals->pluck('lapangan.nama_lapangan')->unique()->implode(', ');
+
         Notifikasi::create([
             'user_id'      => $pemesanan->user_id,
             'pemesanan_id' => $pemesanan->id,
             'judul'        => 'Bukti Pembayaran Dikirim!',
             'pesan'        => 'Bukti pembayaran lapangan ' .
-                              $pemesanan->jadwal->lapangan->nama_lapangan .
+                              $lapanganNames .
                               ' sudah dikirim. Menunggu konfirmasi admin.',
             'tipe'         => 'pembayaran_diterima',
         ]);

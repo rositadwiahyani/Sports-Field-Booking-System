@@ -13,20 +13,21 @@ Artisan::command('inspire', function () {
 
 // ⏰ Auto Expired Booking
 Schedule::call(function () {
-    $pemesanans = Pemesanan::with('jadwal.lapangan')
+    $pemesanans = Pemesanan::with('jadwals.lapangan')
         ->where('status_pemesanan', 'menunggu')
         ->where('batas_bayar', '<', now())
         ->get();
 
     foreach ($pemesanans as $pemesanan) {
-        $jadwal = $pemesanan->jadwal;
-        $namaLapangan = $jadwal->lapangan->nama_lapangan;
-        $tanggal      = $jadwal->tanggal;
+        $lapanganNames = $pemesanan->jadwals->pluck('lapangan.nama_lapangan')->unique()->implode(', ');
+        $tanggal = $pemesanan->jadwals->first() ? $pemesanan->jadwals->first()->tanggal : 'Unknown';
         $userId       = $pemesanan->user_id;
 
         // Kembalikan slot jadwal → tersedia
-        $jadwal->status = 'tersedia';
-        $jadwal->save();
+        foreach ($pemesanan->jadwals as $jadwal) {
+            $jadwal->status = 'tersedia';
+            $jadwal->save();
+        }
 
         // Update status pemesanan → expired
         $pemesanan->status_pemesanan = 'expired';
@@ -37,7 +38,7 @@ Schedule::call(function () {
             'user_id'      => $userId,
             'pemesanan_id' => null,
             'judul'        => 'Booking Expired!',
-            'pesan'        => 'Booking lapangan ' . $namaLapangan .
+            'pesan'        => 'Booking lapangan ' . $lapanganNames .
                               ' pada ' . $tanggal .
                               ' otomatis dibatalkan karena melewati batas waktu pembayaran.',
             'tipe'         => 'booking_dibatalkan',

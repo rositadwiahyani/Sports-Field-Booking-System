@@ -39,7 +39,7 @@ class ReviewController extends Controller
         }
 
         // Ambil lapangan_id dengan aman
-        $lapanganId = $pemesanan->jadwal?->lapangan?->id ?? null;
+        $lapanganId = $pemesanan->jadwals->first()?->lapangan?->id ?? null;
 
         if (!$lapanganId) {
             return back()->with('error', 'Data lapangan tidak ditemukan.');

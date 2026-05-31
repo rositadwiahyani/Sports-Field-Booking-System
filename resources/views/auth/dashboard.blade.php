@@ -62,8 +62,8 @@
             @forelse($pemesananTerbaru as $p)
             <tr class="border-t border-gray-100 hover:bg-gray-50">
                 <td class="px-4 py-3">{{ $p->user->name ?? '-' }}</td>
-                <td class="px-4 py-3">{{ $p->jadwal->lapangan->nama_lapangan }}</td>
-                <td class="px-4 py-3">{{ $p->jadwal->tanggal }}</td>
+                <td class="px-4 py-3">{{ $p->jadwals->first()->lapangan->nama_lapangan ?? '-' }}</td>
+                <td class="px-4 py-3">{{ $p->jadwals->first()->tanggal ?? '-' }} ({{ $p->jadwals->count() }} Jam)</td>
                 <td class="px-4 py-3">Rp {{ number_format($p->total_harga, 0, ',', '.') }}</td>
                 <td class="px-4 py-3">
                     @if($p->status_pemesanan == 'menunggu')
