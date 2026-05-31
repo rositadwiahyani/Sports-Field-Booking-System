@@ -215,3 +215,5 @@ function togglePassword(inputId, eyeOpenId, eyeClosedId) {
 </script>
 
 @endsection
+
+
