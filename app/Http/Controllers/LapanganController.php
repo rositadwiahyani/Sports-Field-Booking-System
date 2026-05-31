@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Lapangan;
 use App\Models\Jadwal;
+use App\Services\JadwalService;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class LapanganController extends Controller
 {
@@ -66,7 +68,7 @@ class LapanganController extends Controller
 
         }
 
-        Lapangan::create([
+        $lapangan = Lapangan::create([
             'nomor_lapangan' => $request->nomor_lapangan,
             'nama_lapangan'  => $request->nama_lapangan,
             'tipe_lapangan'  => $request->tipe_lapangan,
@@ -78,8 +80,13 @@ class LapanganController extends Controller
             'foto'           => $fotoPath,
         ]);
 
+        // 🔥 Auto-Generate Jadwal 30 Hari Ke Depan
+        $startDate = Carbon::now()->format('Y-m-d');
+        $endDate = Carbon::now()->addDays(29)->format('Y-m-d'); // Total 30 hari termasuk hari ini
+        JadwalService::generateJadwal([$lapangan->id], $startDate, $endDate);
+
         return redirect('/lapangan')
-            ->with('success', 'Data berhasil ditambahkan');
+            ->with('success', 'Data lapangan berhasil ditambahkan dan jadwal 30 hari ke depan telah di-generate.');
     }
 
     // ================= SHOW =================

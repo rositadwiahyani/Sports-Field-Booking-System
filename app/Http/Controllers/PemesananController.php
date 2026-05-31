@@ -13,7 +13,7 @@ class PemesananController extends Controller
 {
     public function index()
     {
-        $pemesanan = Pemesanan::with('jadwal.lapangan', 'user')
+        $pemesanan = Pemesanan::with('jadwals.lapangan', 'user')
             ->where('user_id', Auth::id())
             ->latest()
             ->get();
@@ -43,37 +43,57 @@ class PemesananController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'jadwal_id' => 'required|exists:jadwal,id',
+            'jadwal_id' => 'required|array|min:1',
+            'jadwal_id.*' => 'exists:jadwal,id',
         ]);
 
-        $jadwal = Jadwal::with('lapangan')->findOrFail($request->jadwal_id);
+        $jadwals = Jadwal::with('lapangan')->whereIn('id', $request->jadwal_id)->get();
 
-        if ($jadwal->status !== 'tersedia') {
-            return back()->with('error', 'Jadwal sudah tidak tersedia');
+        // Validasi semua jadwal tersedia dan di tanggal yang sama
+        $firstTanggal = null;
+        $totalHarga = 0;
+        
+        foreach ($jadwals as $jadwal) {
+            if ($jadwal->status !== 'tersedia') {
+                return back()->with('error', 'Salah satu jadwal yang dipilih sudah tidak tersedia.');
+            }
+            if ($firstTanggal === null) {
+                $firstTanggal = $jadwal->tanggal;
+            } elseif ($jadwal->tanggal !== $firstTanggal) {
+                return back()->with('error', 'Anda hanya bisa memilih jadwal pada hari yang sama.');
+            }
+
+            $durasi = (strtotime($jadwal->jam_selesai) - strtotime($jadwal->jam_mulai)) / 3600;
+            $totalHarga += $jadwal->lapangan->harga_per_jam * $durasi;
         }
 
-        $durasi = (strtotime($jadwal->jam_selesai) - strtotime($jadwal->jam_mulai)) / 3600;
-        $harga  = $jadwal->lapangan->harga_per_jam * $durasi;
-
+        // Buat Pemesanan Induk
         $pemesanan = Pemesanan::create([
             'user_id'          => Auth::id() ?? 1,
-            'jadwal_id'        => $jadwal->id,
-            'total_harga'      => $harga,
+            'total_harga'      => $totalHarga,
             'status_pemesanan' => 'menunggu',
             'batas_bayar'      => now()->addHours(2),
         ]);
 
-        $jadwal->status = 'terpesan';
-        $jadwal->save();
+        // Attach jadwal ke pivot dan update status
+        foreach ($jadwals as $jadwal) {
+            $pemesanan->jadwals()->attach($jadwal->id);
+            $jadwal->status = 'terpesan';
+            $jadwal->save();
+        }
+
+        $lapanganNames = $jadwals->pluck('lapangan.nama_lapangan')->unique()->implode(', ');
+        $jamMulai = \Carbon\Carbon::parse($jadwals->min('jam_mulai'))->format('H:i');
+        $jamSelesai = \Carbon\Carbon::parse($jadwals->max('jam_selesai'))->format('H:i');
 
         // 🔔 Notifikasi booking_berhasil
         Notifikasi::create([
             'user_id'      => $pemesanan->user_id,
             'pemesanan_id' => $pemesanan->id,
             'judul'        => 'Booking Berhasil!',
-            'pesan'        => 'Booking lapangan ' . $jadwal->lapangan->nama_lapangan .
-                              ' pada ' . $jadwal->tanggal .
-                              ' berhasil. Segera bayar sebelum ' .
+            'pesan'        => 'Booking lapangan ' . $lapanganNames .
+                              ' pada ' . $firstTanggal . ' jam ' . $jamMulai . '-' . $jamSelesai . 
+                              ' (' . $jadwals->count() . ' Jam) berhasil. Segera bayar sebelum ' .
                               $pemesanan->batas_bayar . '.',
             'tipe'         => 'booking_berhasil',
         ]);
@@ -83,22 +103,25 @@ class PemesananController extends Controller
 
     public function show($id)
     {
-        $pemesanan = Pemesanan::with('jadwal.lapangan')->findOrFail($id);
+        $pemesanan = Pemesanan::with('jadwals.lapangan')->findOrFail($id);
         return view('pemesanan.show', compact('pemesanan'));
     }
 
     public function destroy($id)
     {
-        $pemesanan = Pemesanan::with('jadwal.lapangan')->findOrFail($id);
+        $pemesanan = Pemesanan::with('jadwals.lapangan')->findOrFail($id);
+        $userId = $pemesanan->user_id;
 
-        $jadwal = $pemesanan->jadwal;
-        $namaLapangan = $jadwal->lapangan->nama_lapangan;
-        $tanggal      = $jadwal->tanggal;
-        $userId       = $pemesanan->user_id;
+        $lapanganNames = $pemesanan->jadwals->pluck('lapangan.nama_lapangan')->unique()->implode(', ');
+        $tanggal = $pemesanan->jadwals->first() ? $pemesanan->jadwals->first()->tanggal : 'Unknown';
 
-        $jadwal->status = 'tersedia';
-        $jadwal->save();
+        // Kembalikan semua jadwal menjadi tersedia
+        foreach ($pemesanan->jadwals as $jadwal) {
+            $jadwal->status = 'tersedia';
+            $jadwal->save();
+        }
 
+        $pemesanan->jadwals()->detach();
         $pemesanan->delete();
 
         // 🔔 Notifikasi booking_dibatalkan
@@ -106,7 +129,7 @@ class PemesananController extends Controller
             'user_id'      => $userId,
             'pemesanan_id' => null,
             'judul'        => 'Booking Dibatalkan',
-            'pesan'        => 'Booking lapangan ' . $namaLapangan .
+            'pesan'        => 'Booking lapangan ' . $lapanganNames .
                               ' pada ' . $tanggal . ' telah dibatalkan.',
             'tipe'         => 'booking_dibatalkan',
         ]);

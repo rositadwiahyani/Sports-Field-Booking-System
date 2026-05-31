@@ -12,7 +12,7 @@
             class="w-full h-72 object-cover rounded-2xl mb-6 shadow">
     @endif
 
-    <div class="grid grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         {{-- Info Utama --}}
         <div class="col-span-2">
@@ -37,12 +37,12 @@
                 <span class="text-base font-normal text-gray-400">/ jam</span>
             </p>
 
-            <div class="flex gap-4 mb-6">
-                <div class="bg-gray-50 rounded-xl px-4 py-3 text-center">
+            <div class="flex flex-wrap gap-4 mb-6">
+                <div class="bg-gray-50 rounded-xl px-4 py-3 text-center flex-1 min-w-[120px]">
                     <p class="text-xs text-gray-400 mb-1">Kapasitas</p>
                     <p class="font-bold text-gray-800">👥 {{ $lapangan->kapasitas }} orang</p>
                 </div>
-                <div class="bg-gray-50 rounded-xl px-4 py-3 text-center">
+                <div class="bg-gray-50 rounded-xl px-4 py-3 text-center flex-1 min-w-[120px]">
                     <p class="text-xs text-gray-400 mb-1">Nomor</p>
                     <p class="font-bold text-gray-800">{{ $lapangan->nomor_lapangan }}</p>
                 </div>
@@ -73,14 +73,25 @@
                 @else
                     <form action="/pemesanan" method="POST">
                         @csrf
-                        <select name="jadwal_id"
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4">
-                            @foreach($jadwal as $j)
-                                <option value="{{ $j->id }}">
-                                    {{ $j->tanggal }} | {{ $j->jam_mulai }} - {{ $j->jam_selesai }}
-                                </option>
+                        <div class="max-h-80 overflow-y-auto pr-2 mb-4 space-y-4 custom-scrollbar">
+                            @foreach($jadwal->groupBy('tanggal') as $tanggal => $jadwalGroup)
+                                <div>
+                                    <h4 class="text-xs font-bold text-gray-500 mb-2 border-b pb-1">
+                                        {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('l, d M Y') }}
+                                    </h4>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        @foreach($jadwalGroup as $j)
+                                            <label class="cursor-pointer">
+                                                <input type="checkbox" name="jadwal_id[]" value="{{ $j->id }}" data-tanggal="{{ $tanggal }}" class="peer hidden jadwal-checkbox">
+                                                <div class="text-center py-2 px-1 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 hover:border-blue-400 transition">
+                                                    {{ \Carbon\Carbon::parse($j->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($j->jam_selesai)->format('H:i') }}
+                                                </div>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
                             @endforeach
-                        </select>
+                        </div>
                         <button type="submit"
                             class="gradient-btn text-white w-full py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
                             🏸 Booking Sekarang
@@ -97,5 +108,33 @@
 
     </div>
 </div>
+
+<script>
+    // Membatasi pilihan hanya dalam 1 hari (tanggal yang sama)
+    const checkboxes = document.querySelectorAll('.jadwal-checkbox');
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            let selectedDate = null;
+            
+            // Cek jika ada yang dicentang, simpan tanggalnya
+            checkboxes.forEach(c => {
+                if(c.checked) selectedDate = c.dataset.tanggal;
+            });
+
+            // Enable/disable checkbox lain berdasarkan tanggal
+            checkboxes.forEach(c => {
+                if (selectedDate && c.dataset.tanggal !== selectedDate) {
+                    c.disabled = true;
+                    c.parentElement.style.opacity = '0.5';
+                    c.parentElement.style.cursor = 'not-allowed';
+                } else {
+                    c.disabled = false;
+                    c.parentElement.style.opacity = '1';
+                    c.parentElement.style.cursor = 'pointer';
+                }
+            });
+        });
+    });
+</script>
 
 @endsection

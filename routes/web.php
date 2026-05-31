@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LapanganController;
@@ -13,6 +14,9 @@ use App\Http\Controllers\ProfileController;
 
 // ================= LANDING =================
 Route::get('/', function () {
+    if (Auth::check() && Auth::user()->isAdmin()) {
+        return redirect('/admin/dashboard');
+    }
     return view('welcome');
 });
 
@@ -26,7 +30,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ================= ADMIN =================
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin', 'nocache'])->prefix('admin')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -42,7 +46,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 });
 
 // ================= ADMIN KELOLA =================
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'admin', 'nocache'])->group(function () {
 
     // CRUD Lapangan
     Route::resource('lapangan', LapanganController::class)
@@ -68,7 +72,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 // ================= USER =================
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'nocache'])->group(function () {
 
     // ================= LAPANGAN & JADWAL =================
 

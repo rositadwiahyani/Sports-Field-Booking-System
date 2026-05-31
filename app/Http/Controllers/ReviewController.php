@@ -11,7 +11,7 @@ class ReviewController extends Controller
 {
     public function index()
     {
-        $pemesanan = Pemesanan::with('jadwal.lapangan', 'review')
+        $pemesanan = Pemesanan::with('jadwals.lapangan', 'review')
             ->where('user_id', Auth::id())
             ->where('status_pemesanan', 'dibayar')
             ->get();
@@ -27,7 +27,7 @@ class ReviewController extends Controller
             'komentar'     => 'nullable|string|max:500',
         ]);
 
-        $pemesanan = Pemesanan::with('jadwal.lapangan')->findOrFail($request->pemesanan_id);
+        $pemesanan = Pemesanan::with('jadwals.lapangan')->findOrFail($request->pemesanan_id);
 
         if ($pemesanan->status_pemesanan !== 'dibayar') {
             return back()->with('error', 'Hanya pemesanan yang sudah dibayar yang bisa direview.');

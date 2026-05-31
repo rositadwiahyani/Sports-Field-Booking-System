@@ -16,8 +16,8 @@
         {{-- Detail Pemesanan --}}
         <div class="flex justify-between items-start mb-4">
             <div>
-                <h2 class="text-lg font-bold text-gray-800">{{ $p->jadwal->lapangan->nama_lapangan ?? '-' }}</h2>
-                <p class="text-sm text-gray-500">📅 {{ $p->jadwal->tanggal ?? '-' }}</p>
+                <h2 class="text-lg font-bold text-gray-800">{{ $p->jadwals->first()->lapangan->nama_lapangan ?? '-' }}</h2>
+                <p class="text-sm text-gray-500">📅 {{ $p->jadwals->first()->tanggal ?? '-' }} | 🕒 {{ \Carbon\Carbon::parse($p->jadwals->min('jam_mulai'))->format('H:i') }} - {{ \Carbon\Carbon::parse($p->jadwals->max('jam_selesai'))->format('H:i') }}</p>
                 <p class="text-sm text-blue-600 font-semibold">Rp {{ number_format($p->total_harga, 0, ',', '.') }}</p>
             </div>
 

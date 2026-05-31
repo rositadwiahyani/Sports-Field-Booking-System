@@ -12,7 +12,7 @@
         Sistem booking lapangan badminton yang mudah, cepat, dan terpercaya.
         Pesan lapangan favoritmu sekarang!
     </p>
-    <div class="flex gap-4 justify-center">
+    <div class="flex flex-col sm:flex-row flex-wrap gap-4 justify-center">
         <a href="/lapangan"
             class="bg-white text-blue-700 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition">
             Lihat Lapangan

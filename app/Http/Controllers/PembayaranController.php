@@ -17,7 +17,7 @@ class PembayaranController extends Controller
 
     public function create($pemesanan_id)
     {
-        $pemesanan = Pemesanan::with('jadwal.lapangan')->findOrFail($pemesanan_id);
+        $pemesanan = Pemesanan::with('jadwals.lapangan')->findOrFail($pemesanan_id);
         return view('pembayaran.create', compact('pemesanan'));
     }
 
@@ -29,7 +29,7 @@ class PembayaranController extends Controller
             'bukti_bayar'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $pemesanan = Pemesanan::with('jadwal.lapangan')->findOrFail($request->pemesanan_id);
+        $pemesanan = Pemesanan::with('jadwals.lapangan')->findOrFail($request->pemesanan_id);
 
         if ($pemesanan->status_pemesanan == 'dibayar') {
             return back()->with('error', 'Pemesanan sudah dibayar.');

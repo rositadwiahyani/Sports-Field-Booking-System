@@ -15,15 +15,15 @@
             <div class="space-y-2 text-sm">
                 <div class="flex justify-between">
                     <span class="text-gray-500">Lapangan</span>
-                    <span class="font-medium">{{ $pemesanan->jadwal->lapangan->nama_lapangan }}</span>
+                    <span class="font-medium">{{ $pemesanan->jadwals->first()->lapangan->nama_lapangan }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-500">Tanggal</span>
-                    <span class="font-medium">{{ $pemesanan->jadwal->tanggal }}</span>
+                    <span class="font-medium">{{ $pemesanan->jadwals->first()->tanggal }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-500">Jam</span>
-                    <span class="font-medium">{{ $pemesanan->jadwal->jam_mulai }} - {{ $pemesanan->jadwal->jam_selesai }}</span>
+                    <span class="font-medium">{{ \Carbon\Carbon::parse($pemesanan->jadwals->min('jam_mulai'))->format('H:i') }} - {{ \Carbon\Carbon::parse($pemesanan->jadwals->max('jam_selesai'))->format('H:i') }} ({{ $pemesanan->jadwals->count() }} Jam)</span>
                 </div>
                 <div class="flex justify-between border-t pt-2 mt-2">
                     <span class="text-gray-700 font-semibold">Total</span>

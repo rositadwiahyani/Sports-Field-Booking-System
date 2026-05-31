@@ -5,13 +5,24 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Jadwal;
 use App\Models\Lapangan;
+use App\Services\JadwalService;
 
 class JadwalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jadwal = Jadwal::with('lapangan')->get();
-        return view('jadwal.index', compact('jadwal'));
+        $lapanganList = Lapangan::withCount('jadwal')->get();
+        $selectedLapangan = $request->input('lapangan_id');
+
+        $query = Jadwal::with('lapangan');
+
+        if ($selectedLapangan) {
+            $query->where('lapangan_id', $selectedLapangan);
+        }
+
+        $jadwal = $query->orderBy('tanggal', 'desc')->orderBy('jam_mulai')->get();
+
+        return view('jadwal.index', compact('jadwal', 'lapanganList', 'selectedLapangan'));
     }
 
     public function create()
@@ -22,17 +33,33 @@ class JadwalController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'lapangan_id' => 'required|exists:lapangan,id',
-            'tanggal' => 'required|date',
-            'jam_mulai' => 'required',
-            'jam_selesai' => 'required',
-            'status' => 'required|in:tersedia,terpesan,libur'
+        $request->validate([
+            'lapangan_id' => 'required', // Bisa 'semua' atau ID integer
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
         ]);
 
-        Jadwal::create($validated);
+        $lapanganIds = [];
+        if ($request->lapangan_id == 'semua') {
+            $lapanganIds = Lapangan::pluck('id')->toArray();
+        } else {
+            // Validasi ID spesifik
+            $request->validate(['lapangan_id' => 'exists:lapangan,id']);
+            $lapanganIds = [$request->lapangan_id];
+        }
 
-        return redirect('/jadwal')->with('success', 'Jadwal berhasil ditambahkan');
+        if (empty($lapanganIds)) {
+            return back()->with('error', 'Tidak ada lapangan yang tersedia untuk di-generate.');
+        }
+
+        // Jalankan service generator
+        $added = JadwalService::generateJadwal(
+            $lapanganIds, 
+            $request->tanggal_mulai, 
+            $request->tanggal_selesai
+        );
+
+        return redirect('/jadwal')->with('success', "Proses selesai! $added slot jadwal baru berhasil di-generate.");
     }
 
     public function edit($id)

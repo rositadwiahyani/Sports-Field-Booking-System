@@ -24,8 +24,8 @@ class Jadwal extends Model
         return $this->belongsTo(Lapangan::class);
     }
 
-    public function pemesanan()
+    public function pemesanans()
     {
-        return $this->hasMany(Pemesanan::class);
+        return $this->belongsToMany(Pemesanan::class, 'pemesanan_jadwal');
     }
 }

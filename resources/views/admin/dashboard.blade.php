@@ -125,7 +125,8 @@
         </h2>
     </div>
 
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
 
         <thead>
             <tr class="gradient-hero text-white">
@@ -148,11 +149,11 @@
                 </td>
 
                 <td class="px-4 py-3">
-                    {{ optional(optional($p->jadwal)->lapangan)->nama_lapangan ?? '-' }}
+                    {{ $p->jadwals->first()->lapangan->nama_lapangan ?? '-' }}
                 </td>
 
                 <td class="px-4 py-3">
-                    {{ optional($p->jadwal)->tanggal ?? '-' }}
+                    {{ $p->jadwals->first()->tanggal ?? '-' }} ({{ $p->jadwals->count() }} Jam)
                 </td>
 
                 <td class="px-4 py-3">
@@ -205,9 +206,8 @@
             @endforelse
 
         </tbody>
-
-    </table>
-
+        </table>
+    </div>
 </div>
 
 @endsection
