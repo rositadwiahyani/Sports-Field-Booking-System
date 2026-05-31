@@ -125,7 +125,8 @@
         </h2>
     </div>
 
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
 
         <thead>
             <tr class="gradient-hero text-white">
@@ -205,10 +206,10 @@
             @endforelse
 
         </tbody>
-
-    </table>
-
+        </table>
+    </div>
 </div>
 
 @endsection
+
 
