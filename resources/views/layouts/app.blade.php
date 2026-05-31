@@ -25,6 +25,13 @@
             <span>Sports Field Booking System</span>
         </a>
 
+        @php
+            $unreadNotif = 0;
+            if (Auth::check()) {
+                $unreadNotif = Auth::user()->notifikasi()->where('is_read', false)->count();
+            }
+        @endphp
+
         {{-- Hamburger Menu Button (Mobile) --}}
         <button id="mobile-menu-btn" class="md:hidden block text-white focus:outline-none">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -39,11 +46,26 @@
                 @if(Auth::user()->isAdmin())
                     <a href="/lapangan" class="hover:text-blue-200 transition">Lapangan</a>
                     <a href="/admin/dashboard" class="hover:text-blue-200 transition">Dashboard</a>
+                    <a href="/notifikasi" class="hover:text-blue-200 transition relative flex items-center">
+                        Notifikasi
+                        @if($unreadNotif > 0)
+                            <span class="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white">
+                                {{ $unreadNotif }}
+                            </span>
+                        @endif
+                    </a>
                 @else
                     <a href="/lapangan" class="hover:text-blue-200 transition">Lapangan</a>
                     <a href="/pemesanan" class="hover:text-blue-200 transition">Pemesanan</a>
                     <a href="/review" class="hover:text-blue-200 transition">Review</a>
-                    <a href="/notifikasi" class="hover:text-blue-200 transition">Notifikasi</a>
+                    <a href="/notifikasi" class="hover:text-blue-200 transition relative flex items-center">
+                        Notifikasi
+                        @if($unreadNotif > 0)
+                            <span class="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-white">
+                                {{ $unreadNotif }}
+                            </span>
+                        @endif
+                    </a>
                     <a href="/profile" class="hover:text-blue-200 transition">Profil</a>
                 @endif
                 <form action="/logout" method="POST" style="display:inline;">
@@ -63,11 +85,26 @@
                 @if(Auth::user()->isAdmin())
                     <a href="/lapangan" class="hover:text-blue-200 transition">Lapangan</a>
                     <a href="/admin/dashboard" class="hover:text-blue-200 transition">Dashboard</a>
+                    <a href="/notifikasi" class="hover:text-blue-200 transition flex items-center gap-1">
+                        Notifikasi
+                        @if($unreadNotif > 0)
+                            <span class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full border border-white">
+                                {{ $unreadNotif }}
+                            </span>
+                        @endif
+                    </a>
                 @else
                     <a href="/lapangan" class="hover:text-blue-200 transition">Lapangan</a>
                     <a href="/pemesanan" class="hover:text-blue-200 transition">Pemesanan</a>
                     <a href="/review" class="hover:text-blue-200 transition">Review</a>
-                    <a href="/notifikasi" class="hover:text-blue-200 transition">Notifikasi</a>
+                    <a href="/notifikasi" class="hover:text-blue-200 transition flex items-center gap-1">
+                        Notifikasi
+                        @if($unreadNotif > 0)
+                            <span class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full border border-white">
+                                {{ $unreadNotif }}
+                            </span>
+                        @endif
+                    </a>
                     <a href="/profile" class="hover:text-blue-200 transition">Profil</a>
                 @endif
                 <form action="/logout" method="POST" class="mt-2">
