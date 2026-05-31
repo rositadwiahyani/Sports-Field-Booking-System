@@ -81,7 +81,7 @@ class AdminController extends Controller
     // ✅ APPROVE PEMBAYARAN
     public function approve($id)
     {
-        $pembayaran = Pembayaran::with('pemesanan.jadwal.lapangan')->findOrFail($id);
+        $pembayaran = Pembayaran::with('pemesanan.jadwals.lapangan')->findOrFail($id);
         $pemesanan  = $pembayaran->pemesanan;
 
         $pembayaran->status = 'lunas';
@@ -90,13 +90,16 @@ class AdminController extends Controller
         $pemesanan->status_pemesanan = 'dibayar';
         $pemesanan->save();
 
+        $lapanganNames = $pemesanan->jadwals->pluck('lapangan.nama_lapangan')->unique()->implode(', ');
+        $tanggal = $pemesanan->jadwals->first() ? $pemesanan->jadwals->first()->tanggal : 'Unknown';
+
         Notifikasi::create([
             'user_id'      => $pemesanan->user_id,
             'pemesanan_id' => $pemesanan->id,
             'judul'        => 'Pembayaran Dikonfirmasi!',
             'pesan'        => 'Pembayaran lapangan ' .
-                              $pemesanan->jadwal->lapangan->nama_lapangan .
-                              ' pada ' . $pemesanan->jadwal->tanggal .
+                              $lapanganNames .
+                              ' pada ' . $tanggal .
                               ' telah dikonfirmasi. Selamat bermain!',
             'tipe'         => 'pembayaran_diterima',
         ]);

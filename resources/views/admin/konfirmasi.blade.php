@@ -144,13 +144,13 @@
 
                     {{-- Lapangan --}}
                     <td class="px-4 py-3">
-                        <p class="font-medium text-gray-800">{{ optional(optional($p->pemesanan->jadwal)->lapangan)->nama_lapangan ?? '-' }}</p>
-                        <p class="text-xs text-gray-400">{{ optional(optional($p->pemesanan->jadwal)->lapangan)->tipe_lapangan ?? '' }}</p>
+                        <p class="font-medium text-gray-800">{{ optional(optional($p->pemesanan->jadwals->first())->lapangan)->nama_lapangan ?? '-' }}</p>
+                        <p class="text-xs text-gray-400">{{ optional(optional($p->pemesanan->jadwals->first())->lapangan)->tipe_lapangan ?? '' }}</p>
                     </td>
 
                     {{-- Tanggal --}}
                     <td class="px-4 py-3 text-gray-700">
-                        {{ optional($p->pemesanan->jadwal)->tanggal ?? '-' }}
+                        {{ optional($p->pemesanan->jadwals->first())->tanggal ?? '-' }}
                     </td>
 
                     {{-- Jam --}}
