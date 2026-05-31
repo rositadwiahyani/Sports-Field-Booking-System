@@ -66,7 +66,7 @@
     </nav>
 
     {{-- KONTEN UTAMA --}}
-    <main class="max-w-6xl mx-auto px-6 py-8">
+    <main class="max-w-6xl mx-auto px-6 py-8 pb-20">
 
         @if(session('success'))
             <div class="bg-blue-100 border border-blue-400 text-blue-800 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
@@ -85,9 +85,10 @@
     </main>
 
     {{-- FOOTER --}}
-    <footer class="text-center text-gray-400 text-sm py-6 mt-8 border-t border-gray-200">
+    <footer class="fixed bottom-0 left-0 w-full text-center text-gray-400 text-sm py-4 border-t border-gray-200 bg-white/90 backdrop-blur-sm z-40">
         © 2026 <span class="text-blue-600 font-semibold">Sports Field Booking System</span> — Sistem Booking Lapangan Olahraga
     </footer>
 
 </body>
 </html>
+
