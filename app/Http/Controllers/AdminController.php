@@ -37,7 +37,7 @@ class AdminController extends Controller
         $filterStatus = $request->input('status', 'pending'); // default: pending
         $filterMetode = $request->input('metode');
 
-        $query = Pembayaran::with('pemesanan.user', 'pemesanan.jadwal.lapangan');
+        $query = Pembayaran::with('pemesanan.user', 'pemesanan.jadwals.lapangan');
 
         // Filter status
         if ($filterStatus && $filterStatus !== 'semua') {
@@ -54,7 +54,7 @@ class AdminController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->whereHas('pemesanan.user', function ($u) use ($search) {
                     $u->where('name', 'like', "%{$search}%");
-                })->orWhereHas('pemesanan.jadwal.lapangan', function ($l) use ($search) {
+                })->orWhereHas('pemesanan.jadwals.lapangan', function ($l) use ($search) {
                     $l->where('nama_lapangan', 'like', "%{$search}%");
                 });
             });
@@ -110,7 +110,7 @@ class AdminController extends Controller
     // ❌ REJECT PEMBAYARAN
     public function reject($id)
     {
-        $pembayaran = Pembayaran::with('pemesanan.jadwal')->findOrFail($id);
+        $pembayaran = Pembayaran::with('pemesanan.jadwals.lapangan')->findOrFail($id);
         $pemesanan  = $pembayaran->pemesanan;
 
         $pembayaran->status = 'gagal';
