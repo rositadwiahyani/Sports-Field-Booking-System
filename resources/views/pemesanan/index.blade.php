@@ -4,9 +4,9 @@
 
 @section('content')
 
-<div class="flex items-center justify-between mb-6">
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
     <h1 class="text-2xl font-bold text-gray-800">Data Pemesanan</h1>
-    <div class="flex gap-3">
+    <div class="flex flex-wrap gap-3">
         <a href="/pemesanan/create"
             class="gradient-btn text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
             + Booking
@@ -23,7 +23,8 @@
 </div>
 
 <div class="bg-white rounded-xl shadow overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm min-w-[600px]">
         <thead>
             <tr class="gradient-hero text-white">
                 <th class="px-4 py-3 text-left">User</th>
@@ -110,7 +111,8 @@
             </tr>
             @endforeach
         </tbody>
-    </table>
+        </table>
+    </div>
 
     {{-- EMPTY STATE --}}
     @if($pemesanan->isEmpty())
@@ -125,6 +127,7 @@
 </div>
 
 @endsection
+
 
 
 
