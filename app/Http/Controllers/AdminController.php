@@ -7,6 +7,7 @@ use App\Models\Pembayaran;
 use App\Models\Lapangan;
 use App\Models\User;
 use App\Models\Notifikasi;
+use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
@@ -29,15 +30,52 @@ class AdminController extends Controller
         ));
     }
 
-    //  HALAMAN LIST PEMBAYARAN PENDING
-    public function konfirmasiIndex()
+    //  HALAMAN LIST PEMBAYARAN — SEARCH, FILTER, STATS
+    public function konfirmasiIndex(Request $request)
     {
-        $pembayaran = Pembayaran::with('pemesanan.user', 'pemesanan.jadwal.lapangan')
-            ->where('status', 'pending')
-            ->latest()
-            ->get();
+        $search       = $request->input('search');
+        $filterStatus = $request->input('status', 'pending'); // default: pending
+        $filterMetode = $request->input('metode');
 
-        return view('admin.konfirmasi', compact('pembayaran'));
+        $query = Pembayaran::with('pemesanan.user', 'pemesanan.jadwal.lapangan');
+
+        // Filter status
+        if ($filterStatus && $filterStatus !== 'semua') {
+            $query->where('status', $filterStatus);
+        }
+
+        // Filter metode bayar
+        if ($filterMetode && $filterMetode !== 'semua') {
+            $query->where('metode_bayar', $filterMetode);
+        }
+
+        // Search by user name or lapangan name
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('pemesanan.user', function ($u) use ($search) {
+                    $u->where('name', 'like', "%{$search}%");
+                })->orWhereHas('pemesanan.jadwal.lapangan', function ($l) use ($search) {
+                    $l->where('nama_lapangan', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $pembayaran = $query->latest()->get();
+
+        // Stats
+        $totalPending = Pembayaran::where('status', 'pending')->count();
+        $totalLunas   = Pembayaran::where('status', 'lunas')->count();
+        $totalGagal   = Pembayaran::where('status', 'gagal')->count();
+
+        return view('admin.konfirmasi', compact(
+            'pembayaran',
+            'totalPending',
+            'totalLunas',
+            'totalGagal',
+            'search',
+            'filterStatus',
+            'filterMetode'
+        ));
     }
 
     // ✅ APPROVE PEMBAYARAN
@@ -90,3 +128,5 @@ class AdminController extends Controller
         return redirect('/admin/konfirmasi')->with('error', 'Pembayaran ditolak.');
     }
 }
+
+

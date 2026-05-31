@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LapanganController;
@@ -13,6 +14,9 @@ use App\Http\Controllers\ProfileController;
 
 // ================= LANDING =================
 Route::get('/', function () {
+    if (Auth::check() && Auth::user()->isAdmin()) {
+        return redirect('/admin/dashboard');
+    }
     return view('welcome');
 });
 
@@ -134,3 +138,4 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile/delete', [ProfileController::class, 'deleteAccount'])
         ->name('profile.delete');
 });
+
