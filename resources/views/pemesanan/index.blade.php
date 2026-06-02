@@ -6,15 +6,15 @@
 
 <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
     <h1 class="text-2xl font-bold text-gray-800">Data Pemesanan</h1>
+
     <div class="flex flex-wrap gap-3">
+        <!-- BOOKING -->
         <a href="/pemesanan/create"
             class="gradient-btn text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
             + Booking
         </a>
-        <a href="/notifikasi"
-            class="bg-yellow-400 text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
-            🔔 Notifikasi
-        </a>
+
+        <!-- REVIEW -->
         <a href="/review"
             class="bg-purple-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
             ⭐ Review
@@ -40,10 +40,10 @@
             <tr class="border-t border-gray-100 hover:bg-gray-50 transition">
                 <td class="px-4 py-3">{{ $p->user->name ?? 'User' }}</td>
 
-                {{-- 🔥 NULL SAFE --}}
                 <td class="px-4 py-3">
                     {{ $p->jadwals->first()->lapangan?->nama_lapangan ?? '-' }}
                 </td>
+
                 <td class="px-4 py-3">
                     {{ $p->jadwals->first()->tanggal ?? '-' }}
                 </td>
@@ -52,7 +52,7 @@
                     Rp {{ number_format($p->total_harga, 0, ',', '.') }}
                 </td>
 
-                {{-- 🔥 STATUS --}}
+                <!-- STATUS -->
                 <td class="px-4 py-3">
                     @if($p->status_pemesanan == 'menunggu')
                         <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">
@@ -73,7 +73,7 @@
                     @endif
                 </td>
 
-                {{-- 🔥 OPSI --}}
+                <!-- OPSI -->
                 <td class="px-4 py-3">
                     @if($p->status_pemesanan == 'menunggu')
                         <div class="flex gap-2">
@@ -114,7 +114,7 @@
         </table>
     </div>
 
-    {{-- EMPTY STATE --}}
+    <!-- EMPTY STATE -->
     @if($pemesanan->isEmpty())
         <div class="text-center py-12 text-gray-400">
             <p class="text-4xl mb-2">🏸</p>
@@ -127,7 +127,3 @@
 </div>
 
 @endsection
-
-
-
-
