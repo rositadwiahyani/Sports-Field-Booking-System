@@ -58,14 +58,13 @@
                 @endif
             </div>
 
-            <div class="flex gap-3">
-                <button type="submit"
-                    class="gradient-btn text-white px-6 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
-                    Booking Sekarang
+            <div class="flex items-center justify-start gap-4 mt-6 ml-6">
+                <button type="submit" class="bg-[#335495] text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-[#254175] hover:shadow-lg hover:shadow-[#335495]/20 transition-all active:scale-95">
+                Booking Sekarang
                 </button>
-                <a href="/pemesanan"
-                    class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition">
-                    Batal
+
+                <a href="/pemesanan" class="bg-gray-200 text-[#434655] px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-300 transition-colors">
+                Batal
                 </a>
             </div>
         </form>

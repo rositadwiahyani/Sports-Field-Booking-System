@@ -41,7 +41,8 @@
 
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Metode Pembayaran</label>
-                <select name="metode_bayar"
+                {{-- Ditambahkan ID "metode_bayar" --}}
+                <select id="metode_bayar" name="metode_bayar"
                     class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
                     <option value="transfer">🏦 Transfer Bank</option>
                     <option value="tunai">💵 Tunai</option>
@@ -49,7 +50,8 @@
                 </select>
             </div>
 
-            <div class="mb-6">
+            {{-- Ditambahkan ID "bukti-container" --}}
+            <div id="bukti-container" class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                     Bukti Pembayaran <span class="text-red-500">*</span>
                 </label>
@@ -62,16 +64,29 @@
 
             <div class="flex gap-3">
                 <button type="submit"
-                    class="gradient-btn text-white px-6 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
+                    class="bg-[#335495] text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-[#254175] transition-all shadow-lg shadow-[#335495]/20 active:scale-95">
                     Bayar Sekarang
                 </button>
                 <a href="/pemesanan"
-                    class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition">
+                    class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition active:scale-95">
                     Batal
                 </a>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    const metodeSelect = document.getElementById('metode_bayar');
+    const buktiContainer = document.getElementById('bukti-container');
+
+    metodeSelect.addEventListener('change', function() {
+        if (this.value === 'tunai') {
+            buktiContainer.classList.add('hidden'); // Sembunyikan jika pilih tunai
+        } else {
+            buktiContainer.classList.remove('hidden'); // Tampilkan jika pilih yang lain
+        }
+    });
+</script>
 
 @endsection

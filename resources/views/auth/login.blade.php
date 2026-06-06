@@ -36,9 +36,8 @@
                 </div>
             </div>
 
-            <button type="submit"
-                class="gradient-btn text-white w-full py-2 rounded-lg text-sm font-medium hover:opacity-90 transition">
-                Login
+            <button type="submit" class="w-full bg-[#335495] text-white font-bold py-3 px-4 rounded-xl hover:bg-[#254175] hover:shadow-md hover:shadow-[#335495]/20 transition-all active:scale-95 mb-4">
+                 Masuk
             </button>
         </form>
 
